@@ -1,11 +1,17 @@
+
 public struct Rational {
 	
 	public var numerator: Int
 	
 	public var denominator: Int
 	
-	public init?(_ numerator: Int, _ denominator: Int) {
-		guard denominator != 0 else { return nil }
+	public init(_ numerator: Int, _ denominator: Int) {
+		guard denominator != 0 else {
+			self.numerator = 1
+			self.denominator = 0
+			
+			return
+		}
 		
 		var sign = 1
 		if numerator < 0 {
@@ -15,46 +21,41 @@ public struct Rational {
 			sign *= -1
 		}
 		
-		self.numerator = abs(numerator) * sign
-		self.denominator = abs(denominator)
+		let gcd = greatestCommonFactor(numerator, denominator)
+		
+		self.numerator = abs(numerator) * sign / gcd
+		self.denominator = abs(denominator) / gcd
 	}
 	
 }
 
 extension Rational {
 	
-	public var reciprocal: Rational? {
+	static public var nan: Rational {
+		return Rational(1, 0)
+	}
+	
+	public var isNaN: Bool {
+		return self == Rational.nan
+	}
+	
+	public var reciprocal: Rational {
 		return Rational(denominator, numerator)
 	}
 	
 	public var reduced: Rational {
-		let gcd = greatestCommonDivisor(numerator, denominator)
+		let gcd = greatestCommonFactor(numerator, denominator)
 		
-		return Rational(numerator / gcd, denominator / gcd)!
-	}
-	
-	func leastCommonMultiple(_ lhs: Int, _ rhs: Int) -> Int {
-		return (lhs * rhs) / greatestCommonDivisor(lhs, rhs)
-	}
-	
-	func greatestCommonDivisor(_ lhs: Int, _ rhs: Int) -> Int {
-		let alhs = abs(lhs)
-		let arhs = abs(rhs)
-		var a = max(alhs, arhs)
-		var b = min(alhs, arhs)
-		
-		while b > 0 {
-			let r = a % b
-			a = b
-			b = r
-		}
-		
-		return a
+		return Rational(numerator / gcd, denominator / gcd)
 	}
 	
 }
 
-extension Rational: Comparable {
+extension Rational: SignedNumber {
+	
+	public init(integerLiteral value: Int) {
+		self.init(value, 1)
+	}
 	
 	static public func == (lhs: Rational, rhs: Rational) -> Bool {
 		return Double(lhs) == Double(rhs)
@@ -62,6 +63,10 @@ extension Rational: Comparable {
 	
 	static public func < (lhs: Rational, rhs: Rational) -> Bool {
 		return Double(lhs) < Double(rhs)
+	}
+	
+	static public prefix func -(x: Rational) -> Rational {
+		return Rational(-x.numerator, x.denominator)
 	}
 	
 }
@@ -72,23 +77,4 @@ extension Rational: CustomStringConvertible {
 		return "\(numerator)/\(denominator)"
 	}
 }
-
-public func + (lhs: Rational, rhs: Rational) -> Rational {
-	return Rational(lhs.numerator * rhs.denominator + rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator)!
-}
-
-public func - (lhs: Rational, rhs: Rational) -> Rational {
-	return Rational(lhs.numerator * rhs.denominator - rhs.numerator * lhs.denominator, lhs.denominator * rhs.denominator)!
-}
-
-public func * (lhs: Rational, rhs: Rational) -> Rational {
-	return Rational(lhs.numerator * rhs.numerator, lhs.denominator * rhs.denominator)!
-}
-
-public func / (lhs: Rational, rhs: Rational) -> Rational? {
-	guard let rrhs = rhs.reciprocal else {
-		return Rational(0, 1)
-	}
 	
-	return lhs * rrhs
-}
