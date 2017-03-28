@@ -71,6 +71,14 @@ extension Rational: SignedNumber {
 	
 }
 
+extension Rational: Hashable {
+	
+	public var hashValue: Int {
+		return numerator.hashValue ^ denominator.hashValue
+	}
+	
+}
+
 extension Rational: CustomStringConvertible {
 	
 	public var description: String {
