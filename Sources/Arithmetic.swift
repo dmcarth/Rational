@@ -12,11 +12,13 @@ public func * (lhs: Rational, rhs: Rational) -> Rational {
 }
 
 public func / (lhs: Rational, rhs: Rational) -> Rational {
-	guard !rhs.isNaN else {
+	let rrhs = rhs.reciprocal
+	
+	guard !rrhs.isNaN else {
 		return 0 / 1
 	}
 	
-	return lhs * rhs
+	return lhs * rrhs
 }
 
 public func % (lhs: Rational, rhs: Rational) -> Rational {
