@@ -15,6 +15,14 @@ extension Float {
 	
 }
 
+extension Int {
+	
+	public init(_ rational: Rational) {
+		self = rational.numerator / rational.denominator
+	}
+	
+}
+
 public func / (lhs: Int, rhs: Int) -> Rational {
 	return Rational(lhs, rhs)
 }
