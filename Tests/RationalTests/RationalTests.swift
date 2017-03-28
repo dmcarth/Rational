@@ -2,16 +2,21 @@ import XCTest
 @testable import Rational
 
 class RationalTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        XCTAssertEqual(Rational().text, "Hello, World!")
-    }
-
-
+	
+	func testRational() {
+		let ratio: Rational = 1/4
+		
+		XCTAssertEqual(Double(ratio), 0.25)
+	}
+	
+	func testDivideByZero() {
+		XCTAssertEqual(Rational(1, 0).isNaN, true)
+	}
+	
     static var allTests : [(String, (RationalTests) -> () throws -> Void)] {
         return [
-            ("testExample", testExample),
+			("testRational", testRational),
+            ("testDivideByZero", testDivideByZero),
         ]
     }
 }
